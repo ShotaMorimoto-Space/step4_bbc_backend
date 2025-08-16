@@ -25,6 +25,13 @@ from sqlalchemy.sql import func
 
 from app.core.config import settings
 
+import os
+import ssl
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.orm import sessionmaker
+from app.core.config import settings
+
+
 Base = declarative_base()
 
 # -------- GUID (UUID文字列を36桁で保存) --------
@@ -195,6 +202,12 @@ class SwingSection(Base):
 
 # ---------- Async Engine / Session ----------
 DATABASE_URL = settings.assemble_db_url()  # mysql+asyncmy://... を返す想定
+ssl_ca = os.getenv("DATABASE_SSL_CA")
+
+ssl_ctx = ssl.create_default_context(cafile=ssl_ca)
+ssl_ctx.minimum_version = ssl.TLSVersion.TLSv1_2
+ssl_ctx.check_hostname = True  # Azure MySQL はホスト名検証あり
+ssl_ctx.verify_mode = ssl.CERT_REQUIRED
 
 engine = create_async_engine(
     DATABASE_URL,
@@ -203,6 +216,7 @@ engine = create_async_engine(
     max_overflow=10,
     pool_recycle=1800,
     pool_pre_ping=True,
+    connect_args={"ssl": ssl_ctx},
 )
 
 AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
