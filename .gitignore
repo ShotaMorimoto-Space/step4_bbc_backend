@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+*.sqlite3
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# OS / Editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
+logs/
+*.out
+*.err
+
+# Local settings
+.env
+*.pem
+
+# Uploads / temp data
+backend/uploads/
+backend/data/
+*.json
+
+# Docker / Build
+*.pid
+*.gz
+*.bak
+*.tmp
+*.lock
