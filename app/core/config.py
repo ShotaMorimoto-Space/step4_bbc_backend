@@ -48,7 +48,7 @@ class Settings(BaseSettings):
 
     model_config = SettingsConfigDict(
         env_file=".env",
-        case_sensitive=False,  # ★ 大文字・小文字の差を吸収する
+        case_sensitive=False,
         extra="ignore",
     )
 
@@ -56,13 +56,14 @@ class Settings(BaseSettings):
         """
         database_url があればそれを使う。
         無ければ分割値から DSN を構築。
+        aiomysql を使用。
         """
         if self.database_url:
             return self.database_url
         password = quote_plus(self.database_password or "")
         return (
-            f"mysql+asyncmy://{self.database_username}:{password}"
-            f"@{self.database_host}:{self.database_port}/{self.database_name}"
+            f"mysql+aiomysql://{self.database_username}:{password}"
+            f"@{self.database_host}:{self.database_port}/{self.database_name}?ssl=true"
         )
 
     @property
