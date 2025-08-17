@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import enum
 import os
+import ssl
 import uuid
 from datetime import datetime, date
 import uuid
@@ -255,8 +256,13 @@ class SwingSection(Base):
 # ---------- Async Engine / Session ----------
 DATABASE_URL = settings.assemble_db_url()
 
+# 証明書ファイルの絶対パス
 ssl_cert_path = os.path.join(os.path.dirname(__file__), "DigiCertGlobalRootCA.crt.pem")
 
+# SSLコンテキスト作成
+ssl_context = ssl.create_default_context(cafile=ssl_cert_path)
+
+# エンジン作成
 engine = create_async_engine(
     DATABASE_URL,
     echo=(settings.env.lower() == "development"),
@@ -265,9 +271,7 @@ engine = create_async_engine(
     pool_recycle=1800,
     pool_pre_ping=True,
     connect_args={
-        "ssl": {
-            "ca": ssl_cert_path
-        }
+        "ssl": ssl_context
     },
 )
 
