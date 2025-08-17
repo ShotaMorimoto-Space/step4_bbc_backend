@@ -263,6 +263,17 @@ ssl_cert_path = os.path.join(os.path.dirname(__file__), "DigiCertGlobalRootCA.cr
 ssl_context = ssl.create_default_context(cafile=ssl_cert_path)
 
 # エンジン作成
+DATABASE_URL = settings.assemble_db_url()
+
+# CA証明書のパス
+ssl_cert_path = os.path.join(os.path.dirname(__file__), "DigiCertGlobalRootCA.crt.pem")
+
+# Azure MySQL 向け SSLContext を作成
+ssl_context = ssl.create_default_context(cafile=ssl_cert_path)
+ssl_context.check_hostname = True
+ssl_context.verify_mode = ssl.CERT_REQUIRED
+
+# 非同期エンジン
 engine = create_async_engine(
     DATABASE_URL,
     echo=(settings.env.lower() == "development"),
@@ -271,11 +282,13 @@ engine = create_async_engine(
     pool_recycle=1800,
     pool_pre_ping=True,
     connect_args={
-        "ssl": ssl_context
+        "ssl": ssl_context,   # Azure MySQL はこれでOK
     },
 )
 
-AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+AsyncSessionLocal = sessionmaker(
+    engine, class_=AsyncSession, expire_on_commit=False
+)
 
 async def create_tables():
     async with engine.begin() as conn:
