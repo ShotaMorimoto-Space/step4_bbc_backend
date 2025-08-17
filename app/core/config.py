@@ -60,15 +60,10 @@ class Settings(BaseSettings):
         if self.database_url:
             return self.database_url
         password = quote_plus(self.database_password or "")
-        base_url = (
+        return (
             f"mysql+asyncmy://{self.database_username}:{password}"
             f"@{self.database_host}:{self.database_port}/{self.database_name}"
-            )
-        
-        # Azure MySQL なら SSL を強制
-        if self.env.lower() != "development":
-            return f"{base_url}?ssl=true"
-        return base_url
+        )
 
     @property
     def allowed_origins(self) -> List[str]:

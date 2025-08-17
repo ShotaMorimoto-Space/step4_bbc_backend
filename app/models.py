@@ -256,8 +256,7 @@ class SwingSection(Base):
 # ---------- Async Engine / Session ----------
 DATABASE_URL = settings.assemble_db_url()
 
-ssl_cert_path = "/var/ssl/certs/DigiCertGlobalRootCA.crt.pem"
-ssl_context = ssl.create_default_context(cafile=ssl_cert_path)
+ssl_context = ssl.create_default_context()
 ssl_context.check_hostname = True
 ssl_context.verify_mode = ssl.CERT_REQUIRED
 
