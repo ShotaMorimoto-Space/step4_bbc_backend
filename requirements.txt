@@ -22,4 +22,4 @@ pydantic-settings>=2.0
 pydantic[email]
 email-validator
 gunicorn
-uvicorn[standard]
+aiomysql

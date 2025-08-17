@@ -63,8 +63,9 @@ class Settings(BaseSettings):
         password = quote_plus(self.database_password or "")
         return (
             f"mysql+aiomysql://{self.database_username}:{password}"
-            f"@{self.database_host}:{self.database_port}/{self.database_name}?ssl=true"
-        )
+            f"@{self.database_host}:{self.database_port}/{self.database_name}"
+            f"?ssl_ca=/etc/ssl/certs/ca-certificates.crt"
+            )
 
     @property
     def allowed_origins(self) -> List[str]:
