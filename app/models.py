@@ -256,24 +256,11 @@ class SwingSection(Base):
 # ---------- Async Engine / Session ----------
 DATABASE_URL = settings.assemble_db_url()
 
-# 証明書ファイルの絶対パス
-ssl_cert_path = os.path.join(os.path.dirname(__file__), "DigiCertGlobalRootCA.crt.pem")
-
-# SSLコンテキスト作成
-ssl_context = ssl.create_default_context(cafile=ssl_cert_path)
-
-# エンジン作成
-DATABASE_URL = settings.assemble_db_url()
-
-# CA証明書のパス
-ssl_cert_path = os.path.join(os.path.dirname(__file__), "DigiCertGlobalRootCA.crt.pem")
-
-# Azure MySQL 向け SSLContext を作成
+ssl_cert_path = "/var/ssl/certs/DigiCertGlobalRootCA.crt.pem"
 ssl_context = ssl.create_default_context(cafile=ssl_cert_path)
 ssl_context.check_hostname = True
 ssl_context.verify_mode = ssl.CERT_REQUIRED
 
-# 非同期エンジン
 engine = create_async_engine(
     DATABASE_URL,
     echo=(settings.env.lower() == "development"),
@@ -281,9 +268,7 @@ engine = create_async_engine(
     max_overflow=10,
     pool_recycle=1800,
     pool_pre_ping=True,
-    connect_args={
-        "ssl": ssl_context,   # Azure MySQL はこれでOK
-    },
+    connect_args={"ssl": ssl_context},
 )
 
 AsyncSessionLocal = sessionmaker(
