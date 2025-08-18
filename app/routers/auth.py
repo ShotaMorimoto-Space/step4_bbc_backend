@@ -21,6 +21,7 @@ from app.schemas.coach import CoachCreate, CoachResponse, CoachOut,CoachUpdate
 from sqlalchemy import select
 from app.crud import user_crud
 
+
 router = APIRouter(tags=["auth"])
 
 
